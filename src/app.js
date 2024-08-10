@@ -9,16 +9,10 @@ const app = express();
 
 app.use(cors({
     origin:" https://main--todo01245.netlify.app",
+    // origin:"http://localhost:5173",
     credentials:true 
 }))
 
-// app.options('*', cors({
-//     origin: 'https://668d56e981675392b7330c1a--chipper-dasik-f0ac93.netlify.app',
-//     // origin:"http://localhost:3000",
-//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//     credentials: true,
-    
-//   }));
   
 
 app.use(cookieParser())

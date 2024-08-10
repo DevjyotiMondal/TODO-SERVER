@@ -1,32 +1,30 @@
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 import ApiError from "../utilities/apiError.js";
 import asyncHandlerFunction from "../utilities/asyncHandler.js";
 import { User } from '../models/user.model.js';
 
-const verifyJWT= asyncHandlerFunction(async (req,res,next)=>{
-    const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer","")
-    console.log(req.cookies)
-    if(!token){
-    //   res.redirect("/api/v1/user/login");
-    throw new ApiError(401,'token expired or not found');
-    }
-  
-    const decodedToken  =await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
+const verifyJWT = asyncHandlerFunction(async (req, res, next) => {
+    // Extract token from cookies or Authorization header
+    const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "").trim();
 
+    if (!token) {
+        throw new ApiError(401, 'Token expired or not found');
+    }
+
+    // Verify the token
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    // Find the user by ID
     const user = await User.findById(decodedToken?._id);
-    if(!user){
-      res.redirect("/api/v1/user/login");
-       
-    }
-    
-    req.user =user 
 
-    req.user = user; 
-    if(!req.user){
-      res.redirect("/api/v1/user/login");
+    if (!user) {
+        throw new ApiError(401, 'User not found');
     }
+
+    // Assign the user to the request object
+    req.user = user;
 
     next();
-})
+});
 
-export {verifyJWT}
+export { verifyJWT };
