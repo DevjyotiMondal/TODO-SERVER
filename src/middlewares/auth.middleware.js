@@ -6,7 +6,7 @@ import { User } from '../models/user.model.js';
 const verifyJWT = asyncHandlerFunction(async (req, res, next) => {
     // Extract token from cookies or Authorization header
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "").trim();
-
+      
     if (!token) {
         throw new ApiError(401, 'Token expired or not found');
     }

@@ -52,11 +52,13 @@ const login=asyncHandlerFunction(async(req,res)=>{
     if([email,password].some((e)=>e=="")){
         throw new ApiError(401,"email or password is missing")
     }
+
    
     const user = await User.findOne({email});
     if(!user){
         throw new ApiError(401,"user is not registered");
     }
+
     const checkPassword = bcrypt.compare(password,user.password);
 
     if(!checkPassword){
@@ -73,7 +75,9 @@ const login=asyncHandlerFunction(async(req,res)=>{
     console.log(accessToken);
 
     const options={
-       httpOnly:true
+    httpOnly:true,
+    secure:process.env.NODE_ENV==='production',
+    sameSite:'none'
     }
 
     return res
@@ -83,12 +87,13 @@ const login=asyncHandlerFunction(async(req,res)=>{
           .json(new ApiResponse(200,{userInDB,accessToken,refreshToken},"user is logged in "));
 
 })
+
 const logout=asyncHandlerFunction(async(req,res)=>{
 
     const user = await User.findById(req.user._id);
 
     const options = {
-        secure:process.env.NODE_ENV==='production',
+    secure:process.env.NODE_ENV==='production',
     sameSite:'none'
     }
 
